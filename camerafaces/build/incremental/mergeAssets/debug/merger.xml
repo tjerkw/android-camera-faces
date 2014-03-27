@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger>
+
+    <dataSet config="ComAstuetzPagerslidingtabstrip101.aar" >
+        <source path="/Users/tjerk/Development/workspace/CameraFaces/camerafaces/build/exploded-bundles/ComAstuetzPagerslidingtabstrip101.aar/assets" />
+    </dataSet>
+    <dataSet config="main" >
+        <source path="/Users/tjerk/Development/workspace/CameraFaces/camerafaces/src/main/assets" />
+    </dataSet>
+    <dataSet config="debug" >
+        <source path="/Users/tjerk/Development/workspace/CameraFaces/camerafaces/src/debug/assets" />
+    </dataSet>
+
+</merger>

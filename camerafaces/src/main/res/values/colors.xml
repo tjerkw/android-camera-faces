@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="foreground_primary">#FFF</color>
+    <color name="item_background">#3000FF00</color>
+
+    <color name="transparent">#00000000</color>
+
+    <color name="button_pressed">#F46464</color>
+    <color name="button_focused">#F46464</color>
+    <color name="button_normal">#E43434</color>
+    <color name="button_text">#FFFFFF</color>
+
+    <color name="item_card_bg">#14000000</color>
+
+    <color name="accent">#b41414</color>
+    <color name="white">#FFFFFF</color>
+
+</resources>

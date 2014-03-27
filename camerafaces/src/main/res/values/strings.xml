@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="error_fail_connect_camera">Could not connect camera. Is it in use by another app?</string>
+    <string name="app_name">Derpinator</string>
+
+    <string name="face_derp">Derp</string>
+    <string name="face_lol">LoL</string>
+    <string name="face_me_gusta">Me Gusta</string>
+    <string name="face_trolo">Trololo</string>
+    <string name="face_forever_alone">Forever Alone</string>
+    <string name="share_picture">Share photo</string>
+    <string name="toast_camera_data_null">Coudn\'t take picture due to a camera malfunction</string>
+
+
+    <string name="action_share">Share</string>
+    <string name="action_view">View</string>
+    <string name="local_gallery_empty_text">No photos found</string>
+    <string name="action_open_camera">Open camera</string>
+</resources>

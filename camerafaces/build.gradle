@@ -1,0 +1,50 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.8.+'
+    }
+}
+
+apply plugin: 'android'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.google.android:support-v4:r7'
+    compile('com.astuetz:pagerslidingtabstrip:1.0.1') {
+        exclude module: 'support-v4'
+    }
+    compile files('./libs/android-query-full.0.26.8.jar')
+}
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion = '19.0.1'
+
+    signingConfigs {
+        /*
+        release {
+            storeFile file(System.getenv("KEYSTORE"))
+            storePassword System.getenv("KEYSTORE_PASSWORD")
+            keyAlias System.getenv("KEY_ALIAS")
+            keyPassword System.getenv("KEY_PASSWORD")
+        }*/
+        // hardcoded for now
+        release {
+            storeFile file("keystore/release.jks")
+            storePassword "@ndr01dbl13p"
+            keyAlias ""
+            keyPassword ""
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
+}
