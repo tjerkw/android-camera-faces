@@ -10,8 +10,11 @@ package com.mobepic.camerafaces;
 public final class R {
     public static final class anim {
         public static final int fade_in=0x7f040000;
-        public static final int slide_in=0x7f040001;
-        public static final int slide_out=0x7f040002;
+        public static final int fade_out_zoom=0x7f040001;
+        public static final int shutter_in=0x7f040002;
+        public static final int shutter_out=0x7f040003;
+        public static final int slide_in=0x7f040004;
+        public static final int slide_out=0x7f040005;
     }
     public static final class attr {
         /** <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
@@ -134,58 +137,71 @@ containing a value of this type.
     }
     public static final class drawable {
         public static final int background_tab=0x7f020000;
-        public static final int button_background=0x7f020001;
-        public static final int card_bg_r4=0x7f020002;
-        public static final int card_bg_r4_flat_top=0x7f020003;
-        public static final int card_bg_r8=0x7f020004;
-        public static final int card_bg_selected_r4=0x7f020005;
-        public static final int colors=0x7f020006;
-        public static final int face_background=0x7f020007;
-        public static final int face_derp=0x7f020008;
-        public static final int face_forever_alone=0x7f020009;
-        public static final int face_lol=0x7f02000a;
-        public static final int face_lol_hq=0x7f02000b;
-        public static final int face_me_gusta=0x7f02000c;
-        public static final int face_me_gusta_hq=0x7f02000d;
-        public static final int face_troll=0x7f02000e;
-        public static final int face_trolo_hq=0x7f02000f;
-        public static final int ic_launcher=0x7f020010;
-        public static final int ic_menu_share_holo_light=0x7f020011;
-        public static final int icon=0x7f020012;
-        public static final int placeholder=0x7f020013;
-        public static final int transparent=0x7f020014;
+        public static final int btn_shutter=0x7f020001;
+        public static final int btn_shutter_default=0x7f020002;
+        public static final int btn_shutter_pressed=0x7f020003;
+        public static final int button_background=0x7f020004;
+        public static final int card_bg_r4=0x7f020005;
+        public static final int card_bg_r4_flat_top=0x7f020006;
+        public static final int card_bg_r8=0x7f020007;
+        public static final int card_bg_selected_r4=0x7f020008;
+        public static final int colors=0x7f020009;
+        public static final int face_background=0x7f02000a;
+        public static final int face_derp=0x7f02000b;
+        public static final int face_forever_alone=0x7f02000c;
+        public static final int face_lol=0x7f02000d;
+        public static final int face_lol_hq=0x7f02000e;
+        public static final int face_me_gusta=0x7f02000f;
+        public static final int face_me_gusta_hq=0x7f020010;
+        public static final int face_troll=0x7f020011;
+        public static final int face_trolo_hq=0x7f020012;
+        public static final int ic_launcher=0x7f020013;
+        public static final int ic_menu_share_holo_light=0x7f020014;
+        public static final int icon=0x7f020015;
+        public static final int placeholder=0x7f020016;
+        public static final int transparent=0x7f020017;
     }
     public static final class id {
-        public static final int camera_button=0x7f090002;
-        public static final int face=0x7f090006;
-        public static final int image=0x7f090003;
-        public static final int item_toolbar=0x7f090004;
-        public static final int name=0x7f090007;
+        public static final int camera_button=0x7f090008;
+        public static final int face=0x7f09000c;
+        public static final int frame=0x7f090002;
+        public static final int image=0x7f090009;
+        public static final int item_toolbar=0x7f09000a;
+        public static final int name=0x7f09000d;
+        public static final int no_faces_detected=0x7f090003;
         public static final int pager=0x7f090001;
-        public static final int share=0x7f090005;
+        public static final int share=0x7f09000b;
+        public static final int shutter=0x7f090006;
         public static final int tabs=0x7f090000;
+        public static final int textView=0x7f090004;
+        public static final int textView2=0x7f090005;
+        public static final int toggle_front_back_camera=0x7f090007;
     }
     public static final class layout {
         public static final int activity_choose_faces=0x7f030000;
-        public static final int fragment_choose_faces=0x7f030001;
-        public static final int gallery_list_item=0x7f030002;
-        public static final int list_item_face=0x7f030003;
-        public static final int main=0x7f030004;
+        public static final int camera_overlay=0x7f030001;
+        public static final int fragment_choose_faces=0x7f030002;
+        public static final int gallery_list_item=0x7f030003;
+        public static final int list_item_face=0x7f030004;
+        public static final int main=0x7f030005;
     }
     public static final class string {
         public static final int action_open_camera=0x7f070000;
         public static final int action_share=0x7f070001;
         public static final int action_view=0x7f070002;
         public static final int app_name=0x7f070003;
-        public static final int error_fail_connect_camera=0x7f070004;
-        public static final int face_derp=0x7f070005;
-        public static final int face_forever_alone=0x7f070006;
-        public static final int face_lol=0x7f070007;
-        public static final int face_me_gusta=0x7f070008;
-        public static final int face_trolo=0x7f070009;
-        public static final int local_gallery_empty_text=0x7f07000a;
-        public static final int share_picture=0x7f07000b;
-        public static final int toast_camera_data_null=0x7f07000c;
+        public static final int camera_no_faces_descr=0x7f070004;
+        public static final int camera_no_faces_detected=0x7f070005;
+        public static final int error_fail_connect_camera=0x7f070006;
+        public static final int face_derp=0x7f070007;
+        public static final int face_forever_alone=0x7f070008;
+        public static final int face_lol=0x7f070009;
+        public static final int face_me_gusta=0x7f07000a;
+        public static final int face_trolo=0x7f07000b;
+        public static final int local_gallery_empty_text=0x7f07000c;
+        public static final int share_picture=0x7f07000d;
+        public static final int title_choose_faces=0x7f07000e;
+        public static final int toast_camera_data_null=0x7f07000f;
     }
     public static final class style {
         public static final int Theme_Camerafaces=0x7f080000;

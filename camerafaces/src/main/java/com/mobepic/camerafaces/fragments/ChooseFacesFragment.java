@@ -32,8 +32,8 @@ public class ChooseFacesFragment extends Fragment implements AdapterView.OnItemC
     private View contentView;
     private GridView gridView;
     private Button cameraButton;
-    private Animation slide_in;
-    private Animation slide_out;
+    private Animation slideIn;
+    private Animation slideOut;
     // database of faces
     private Faces faces = new Faces();
 
@@ -46,8 +46,8 @@ public class ChooseFacesFragment extends Fragment implements AdapterView.OnItemC
                              Bundle savedInstanceState) {
         contentView = inflater.inflate(R.layout.fragment_choose_faces, null);
 
-        slide_in = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_in);
-        slide_out = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_out);
+        slideIn = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_in);
+        slideOut = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_out);
 
         cameraButton = (Button) contentView.findViewById(R.id.camera_button);
         cameraButton.setVisibility(View.GONE);
@@ -99,7 +99,6 @@ public class ChooseFacesFragment extends Fragment implements AdapterView.OnItemC
                 ((TextView) v.findViewById(R.id.name)).setText(getResources().getString(face.nameResId));
                 ((ImageView) v.findViewById(R.id.face)).setImageResource(face.faceResId);
 
-
                 updateItem(v, position);
                 return v;
             }
@@ -113,6 +112,13 @@ public class ChooseFacesFragment extends Fragment implements AdapterView.OnItemC
         gridView.setOnItemClickListener(this);
 
         return contentView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // somehow this state is not saved
+        cameraButton.setVisibility(gridView.getCheckedItemCount() > 0 ?  View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -134,15 +140,35 @@ public class ChooseFacesFragment extends Fragment implements AdapterView.OnItemC
         } else {
             v.setBackgroundResource(R.drawable.card_bg_r4);
         }
+        v.setPadding(0,0,0,0);
     }
 
     private void showCameraButton() {
         if (cameraButton.getVisibility() == View.GONE) {
 
+            slideOut.cancel();
+
             log("showButton");
             cameraButton.setVisibility(View.VISIBLE);
-            cameraButton.setAnimation(slide_in);
-            slide_in.start();
+            cameraButton.setAnimation(slideIn);
+            slideOut.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    // be sure its shown
+                    cameraButton.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+            slideIn.start();
         }
 
     }
@@ -151,9 +177,11 @@ public class ChooseFacesFragment extends Fragment implements AdapterView.OnItemC
         log("try hideButton");
         if (cameraButton.getVisibility() == View.VISIBLE) {
 
+            slideIn.cancel();
+
             log("hideButton");
-            cameraButton.setAnimation(slide_out);
-            slide_out.setAnimationListener(new Animation.AnimationListener() {
+            cameraButton.setAnimation(slideOut);
+            slideOut.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
 
@@ -169,7 +197,7 @@ public class ChooseFacesFragment extends Fragment implements AdapterView.OnItemC
 
                 }
             });
-            slide_out.start();
+            slideOut.start();
             contentView.requestLayout();
         }
     }

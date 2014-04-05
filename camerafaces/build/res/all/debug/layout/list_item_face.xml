@@ -27,7 +27,11 @@
         android:padding="12dp"
         android:gravity="center"
         android:text="face name"
-        android:background="@color/item_card_bg">
+        android:background="@color/item_card_bg"
+        android:layout_marginTop="0dp"
+        android:layout_marginLeft="@dimen/card_margin_horizontal"
+        android:layout_marginRight="@dimen/card_margin_horizontal"
+        android:layout_marginBottom="@dimen/card_margin_bottom">
     </TextView>
 
 </LinearLayout><!-- From: file:/Users/tjerk/Development/workspace/CameraFaces/camerafaces/src/main/res/layout/list_item_face.xml -->

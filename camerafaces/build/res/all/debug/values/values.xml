@@ -42,9 +42,9 @@
 
     <dimen name="card_margin_bottom">3dp</dimen>
     <dimen name="card_margin_horizontal">4dp</dimen>
-    <dimen name="card_outer_padding">7dp</dimen>
+    <dimen name="card_outer_padding">4dp</dimen>
     <dimen name="grid_column_width">130dp</dimen>
-    <dimen name="grid_spacing">4dp</dimen>
+    <dimen name="grid_spacing">2dp</dimen>
     <!-- From: file:/Users/tjerk/Development/workspace/CameraFaces/camerafaces/src/main/res/values/strings.xml -->
     <eat-comment />
 
@@ -52,6 +52,8 @@
     <string name="action_share">Share</string>
     <string name="action_view">View</string>
     <string name="app_name">Derpinator</string>
+    <string name="camera_no_faces_descr">Aim your camera at some faces</string>
+    <string name="camera_no_faces_detected">No faces detected</string>
     <string name="error_fail_connect_camera">Could not connect camera. Is it in use by another app?</string>
     <string name="face_derp">Derp</string>
     <string name="face_forever_alone">Forever Alone</string>
@@ -60,6 +62,7 @@
     <string name="face_trolo">Trololo</string>
     <string name="local_gallery_empty_text">No photos found</string>
     <string name="share_picture">Share photo</string>
+    <string name="title_choose_faces">Choose some faces</string>
     <string name="toast_camera_data_null">Coudn\'t take picture due to a camera malfunction</string>
     <!-- From: file:/Users/tjerk/Development/workspace/CameraFaces/camerafaces/src/main/res/values/styles.xml -->
     <eat-comment />

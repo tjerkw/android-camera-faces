@@ -11,6 +11,7 @@ import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.graphics.PointF;
 import android.hardware.Camera;
+import android.media.AudioManager;
 import android.media.FaceDetector;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -18,66 +19,186 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.text.format.DateFormat;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.mobepic.camerafaces.model.Face;
 import com.mobepic.camerafaces.model.Faces;
 
+import static android.view.View.OnClickListener;
+
 /**
  * Renders the chosen image (face) on top of the faces detected in the
  * camera result.
  */
-public class CameraFacesActivity extends CameraFaceDetectionActivity {
-    private Face face;
-    private Bitmap faceBitmap = null;
+public class CameraFacesActivity extends CameraFaceDetectionActivity implements OnClickListener {
+    private Face[] faces;
+    private Bitmap[] faceBitmaps = null;
     private FaceBoxView faceBoxView;
+    private boolean facesLoaded = false;
     private ProgressDialog progressDialog;
+    private ImageView shutter;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
+    // animations
+    private Animation shutterIn;
+    private Animation shutterOut;
+    private Animation textIn;
+    private Animation textOut;
 
-        int[] chosenFaces = this.getIntent().getIntArrayExtra("faces");
-        int chosenFace = chosenFaces[0];
-        Faces faces = new Faces();
-        face = chosenFace == -1 ? faces.getRandom() : faces.getFace(chosenFace);
-        int faceDrawable = face.faceResId;
+    private final Camera.ShutterCallback shutterCallback = new Camera.ShutterCallback() {
+        public void onShutter() {
+            AudioManager mgr = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            mgr.playSoundEffect(AudioManager.FLAG_PLAY_SOUND);
+        }
+    };
+    private View noFacesDetectedView;
+    private ImageButton toggleCamera;
 
-        // TODO: offload this to a loader or async task
-        faceBitmap = BitmapFactory.decodeResource(this.getResources(), faceDrawable);
-        super.onCreate(savedInstanceState);
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Loading");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        final int[] chosenFaces = this.getIntent().getIntArrayExtra("faces");
+
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+
+                // TODO: offload this to a loader or async task
+                Faces facesDb = new Faces();
+                if (chosenFaces.length == 0) {
+                    faces = new Face[1];
+                    faces[1] = facesDb.getRandom();
+                } else {
+                    int n = chosenFaces.length;
+                    faces = new Face[n];
+                    faceBitmaps = new Bitmap[n];
+                    for (int i=0;i<chosenFaces.length;i++) {
+                        faces[i] = facesDb.getFace(chosenFaces[i]);
+                        faceBitmaps[i] = BitmapFactory.decodeResource(getResources(), faces[i].faceResId);
+                    }
+                }
+                return null;
+            }
+
+
+            @Override
+            protected void onPostExecute(Void x) {
+                facesLoaded = true;
+                if (progressDialog != null) {
+                    progressDialog.hide();
+                }
+                hideShutter();
+
+            }
+        };
+        task.execute();
     }
 
     protected View getOverlayView() {
+        View view = this.getLayoutInflater().inflate(R.layout.camera_overlay, null);
+        shutter = (ImageView) view.findViewById(R.id.shutter);
+        shutter.setOnClickListener(this);
+        shutter.setVisibility(View.GONE);
+
+        toggleCamera = (ImageButton) view.findViewById(R.id.toggle_front_back_camera);
+        toggleCamera.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cameraView.toggleFrontBackCamera();
+            }
+        });
+
+        noFacesDetectedView = view.findViewById(R.id.no_faces_detected);
+        noFacesDetectedView.setVisibility(View.GONE);
+
+        FrameLayout frame = (FrameLayout) view.findViewById(R.id.frame);
+
         faceBoxView = new FaceBoxView(this);
         this.setFaceDetectionListener(faceBoxView);
-        return faceBoxView;
+
+        frame.addView(faceBoxView,
+                new ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                )
+        );
+
+        // setup animations
+        shutterIn = AnimationUtils.loadAnimation(this, R.anim.shutter_in);
+        shutterOut = AnimationUtils.loadAnimation(this, R.anim.shutter_out);
+        shutterOut.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                shutter.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        textIn = AnimationUtils.loadAnimation(this, R.anim.slide_in);
+        textOut = AnimationUtils.loadAnimation(this, R.anim.slide_out);
+        textOut.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                noFacesDetectedView.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        return view;
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent e) {
-        if (e.getAction() == MotionEvent.ACTION_DOWN) {
-
-            log("taking screenshot");
-            takeScreenshot();
-        }
-        return super.onTouchEvent(e);
+    public void onClick(View view) {
+        takeScreenshot();
     }
 
     private void takeScreenshot() {
 
-        if (progressDialog == null) {
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setIndeterminate(true);
+        if (!facesLoaded) {
+            // should never occur since the button that triggers
+            // this is hidden
+            return;
         }
+        shutter.setEnabled(false);
+        onlyHideShutter();
+        this.setDetecting(false);
+
         progressDialog.show();
         progressDialog.setMessage("Taking picture");
 
         // do in thread to prevent ANR
         try {
-            camera.takePicture(null, null, new Camera.PictureCallback() {
+            camera.takePicture(shutterCallback, null, new Camera.PictureCallback() {
 
                 @Override
                 public void onPictureTaken(final byte[] data, Camera camera) {
@@ -93,6 +214,7 @@ public class CameraFacesActivity extends CameraFaceDetectionActivity {
                             @Override
                             protected Uri doInBackground(Void... voids) {
 
+                                // TODO: this might throw an OutOfMemoryError
                                 this.publishProgress("Creating picture");
                                 // Get camera bitmap and scale it to appropriate size
                                 Bitmap cameraBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
@@ -100,7 +222,7 @@ public class CameraFacesActivity extends CameraFaceDetectionActivity {
                                 cameraBitmap.recycle();
 
                                 Canvas c = new Canvas(result);
-                                faceBoxView.drawFaces(c, result.getWidth(), result.getHeight());
+                                faceBoxView.drawFaces(c, result.getWidth(), result.getHeight(), false);
 
                                 this.publishProgress("Saving picture");
                                 Uri mediaUri = saveBitmap(result);
@@ -119,7 +241,7 @@ public class CameraFacesActivity extends CameraFaceDetectionActivity {
                                 progressDialog.hide();
                                 log("Sharing picture");
                                 if (mediaUri!=null) {
-                                    onSharePicture(mediaUri);
+                                    CameraFacesActivity.this.onPictureTaken(mediaUri);
                                 }
                             }
                         };
@@ -132,7 +254,10 @@ public class CameraFacesActivity extends CameraFaceDetectionActivity {
         } catch(Exception e) {
             e.printStackTrace();
             progressDialog.setMessage("Picture taking failed!");
-            progressDialog.hide();
+            progressDialog.setIndeterminate(false);
+            progressDialog.setProgress(100);
+            progressDialog.setMax(100);
+            //progressDialog.hide();
         }
     }
 
@@ -171,6 +296,11 @@ public class CameraFacesActivity extends CameraFaceDetectionActivity {
         return null;
     }
 
+
+    public void onPictureTaken(final Uri mediaUri) {
+        onSharePicture(mediaUri);
+    }
+
     public void onSharePicture(Uri mediaUri) {
 
         Intent intent = new Intent();
@@ -191,9 +321,14 @@ public class CameraFacesActivity extends CameraFaceDetectionActivity {
     @Override
     public void onPause() {
         super.onPause();
+        if (progressDialog != null) {
+            progressDialog.dismiss();;
+            progressDialog = null;
+        }
         // kill the activity
         this.finish();
     }
+
 
     /**
      * View that overlays the camera,
@@ -211,33 +346,61 @@ public class CameraFacesActivity extends CameraFaceDetectionActivity {
         }
 
         @Override
-        public void onFacesDetected(FaceDetector.Face[] faces, int nFaces) {
+        public void onFacesDetected(FaceDetector.Face[] faces, final int nFaces) {
+            if (!facesLoaded || !isDetecting()) {
+                return;
+            }
             this.faces = faces;
             this.nFaces = nFaces;
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    if (nFaces == 0) {
+                        if (shutter.getVisibility() == View.VISIBLE) {
+                            hideShutter();
+                        }
+                    } else {
+                        if (noFacesDetectedView.getVisibility() == View.VISIBLE) {
+                            showShutter();
+                        }
+                    }
+
+                    // force a repaint
+                    invalidate();
+                }
+            });
         }
 
         public void onDraw(Canvas c) {
             // just check if drawing is wokring
             super.onDraw(c);
-            if(faceBitmap == null) {
+            if(faceBitmaps == null) {
             	return;
             }
 
-            drawFaces(c, getWidth(), getHeight());
+            drawFaces(c, getWidth(), getHeight(), cameraView.isFrontCamera());
 
         }
 
-        void drawFaces(Canvas c, int width, int height) {
+        void drawFaces(Canvas c, int width, int height, boolean isHorizontalInverted) {
 
-            int bitmapWidth = faceBitmap.getWidth();
-            int bitmapHeight = faceBitmap.getHeight();
+            Bitmap faceBitmap = null;
+            Face face = null;
             float scale;
             int faceWidth;
             if (faces == null) {
                 return;
             }
+            int i = 0;
             for (FaceDetector.Face f : faces) {
-                if (f != null) {
+                if (f != null && faceBitmaps != null) {
+                    faceBitmap = faceBitmaps[i % faceBitmaps.length];
+                    face = CameraFacesActivity.this.faces[i % CameraFacesActivity.this.faces.length];
+                    if (faceBitmap == null) {
+                        continue;
+                    }
+                    int bitmapWidth = faceBitmap.getWidth();
+                    int bitmapHeight = faceBitmap.getHeight();
                     log("Repainting face");
                     f.getMidPoint(point);
                     float previewX = point.x / DETECTOR_IMG_SCALE;
@@ -247,6 +410,11 @@ public class CameraFacesActivity extends CameraFaceDetectionActivity {
                     int x = (int)((previewX / previewWidth) * width);
                     int y = (int)((previewY / previewHeight) * height);
                     int e = (int)((previewE / previewWidth) * width);
+
+
+                    if (isHorizontalInverted) {
+                        x = width - x;
+                    }
 
                     //c.drawRect(x - e, y - e, x + e, y + e, RECT_PAINT);
 
@@ -259,14 +427,45 @@ public class CameraFacesActivity extends CameraFaceDetectionActivity {
 
                     int offsetX = (int) (face.xOffsetPercent * bitmapWidth);
                     int offsetY = (int) (face.yOffsetPercent * bitmapHeight);
+
+
                     c.drawBitmap(
                         faceBitmap,
                         -bitmapWidth / 2 + offsetX,
                         -faceBitmap.getHeight() / 2 + offsetY,
                         null);
                     c.restore();
+
+                    i++;
                 }
             }
         }
-    };
+    }
+
+    private void showShutter() {
+        shutterOut.cancel();
+        shutter.setAnimation(shutterIn);
+        shutter.setVisibility(View.VISIBLE);
+        shutterIn.start();
+
+        textIn.cancel();
+        noFacesDetectedView.setAnimation(textOut);
+        textOut.start();
+    }
+
+    private void hideShutter() {
+
+        textOut.cancel();
+        noFacesDetectedView.setAnimation(textIn);
+        noFacesDetectedView.setVisibility(View.VISIBLE);
+        textIn.start();
+
+        onlyHideShutter();
+    }
+
+    private void onlyHideShutter() {
+        shutterIn.cancel();
+        shutter.setAnimation(shutterOut);
+        shutterOut.start();
+    }
 }

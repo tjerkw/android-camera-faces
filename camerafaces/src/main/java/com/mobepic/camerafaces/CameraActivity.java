@@ -93,7 +93,6 @@ public class CameraActivity extends Activity {
         return null;
     }
 
-
     /**
      * Override these methods for camera callbacks
      */
@@ -112,6 +111,7 @@ class CameraView extends SurfaceView implements SurfaceHolder.Callback {
     int width;
     int height;
     private CameraActivity mActivity;
+    private boolean useFrontCamera;
 
     CameraView(CameraActivity context) {
         super(context);
@@ -127,8 +127,20 @@ class CameraView extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceCreated(SurfaceHolder holder) {
         // The Surface has been created, acquire the camera and tell it where
         // to draw.
+       initCamera();
+    }
+
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        // Surface will be destroyed when we return, so stop the preview.
+        // Because the CameraDevice object is not a shared resource, it's very
+        // important to release it when the activity is paused.
+        this.release();
+
+    }
+
+    private void initCamera() {
         try {
-            mCamera = Camera.open();
+            mCamera = Camera.open(useFrontCamera ? 1 : 0);
 
             int angle;
             Display display = mActivity.getWindowManager().getDefaultDisplay();
@@ -165,16 +177,8 @@ class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        // Surface will be destroyed when we return, so stop the preview.
-        // Because the CameraDevice object is not a shared resource, it's very
-        // important to release it when the activity is paused.
-        this.release();
-
-    }
-
     void release() {
-        if(mCamera!=null) {
+        if (mCamera!=null) {
             mCamera.stopPreview();
             mActivity.onCameraStopped();
             mCamera.release();
@@ -182,39 +186,61 @@ class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
+    private void startCamera() {
+
+        if (mCamera==null) {
+            return;
+        }
+
+        // Now that the size is known, set up the camera parameters and begin
+        // the preview.
+        // Now that the size is known, set up the camera parameters and begin
+        // the preview.
+        Camera.Parameters parameters = mCamera.getParameters();
+
+        List<Size> sizes = Compatibility.getSupportedPreviewSizes(parameters);
+
+        int w = width;
+        int h = height;
+        if(sizes!=null) {
+            Log.i("CameraFa", "number of preview sizes: "+sizes.size());
+            for(Size size: sizes) {
+                Log.i("VirtualWeaponActivity", "size "+size.width+"x"+size.height);
+            }
+
+            Size optimalSize = getOptimalPreviewSize(sizes, w, h);
+            w = optimalSize.width;
+            h = optimalSize.height;
+        }
+        parameters.setPreviewSize(w, h);
+
+        try {
+            mCamera.setParameters(parameters);
+        } catch(RuntimeException e) {
+            e.printStackTrace();
+            // sometimes we get an java.lang.RuntimeException: setParameters failed
+        }
+        Log.i("CameraActivity", "Starting camera preview");
+        mCamera.startPreview();
+        //mCamera.getParameters().setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+
+
+        mActivity.onCameraStarted();
+    }
+
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
         width = w;
         height = h;
-        if(mCamera!=null) {
-            // Now that the size is known, set up the camera parameters and begin
-            // the preview.
-            // Now that the size is known, set up the camera parameters and begin
-            // the preview.
-            Camera.Parameters parameters = mCamera.getParameters();
-
-            List<Size> sizes = Compatibility.getSupportedPreviewSizes(parameters);
-            if(sizes!=null) {
-                Log.i("CameraFa", "number of preview sizes: "+sizes.size());
-                for(Size size: sizes) {
-                    Log.i("VirtualWeaponActivity", "size "+size.width+"x"+size.height);
-                }
-                Size optimalSize = getOptimalPreviewSize(sizes, w, h);
-                w = optimalSize.width;
-                h = optimalSize.height;
-            }
-            parameters.setPreviewSize(w, h);
-
-            try {
-                mCamera.setParameters(parameters);
-            } catch(RuntimeException e) {
-                // sometimes we get an java.lang.RuntimeException: setParameters failed
-            }
-            mCamera.startPreview();
-            //mCamera.getParameters().setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+        startCamera();
+    }
 
 
-            mActivity.onCameraStarted();
-        }
+
+    public void toggleFrontBackCamera() {
+        useFrontCamera = !useFrontCamera;
+        release();
+        initCamera();
+        startCamera();
     }
 
     private Size getOptimalPreviewSize(List<Size> sizes, int w, int h) {
@@ -250,5 +276,9 @@ class CameraView extends SurfaceView implements SurfaceHolder.Callback {
             }
         }
         return optimalSize;
+    }
+
+    public boolean isFrontCamera() {
+        return useFrontCamera;
     }
 }

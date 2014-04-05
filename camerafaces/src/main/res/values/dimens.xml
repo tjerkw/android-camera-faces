@@ -2,7 +2,7 @@
 <resources>
     <dimen name="card_margin_horizontal">4dp</dimen>
     <dimen name="card_margin_bottom">3dp</dimen>
-    <dimen name="card_outer_padding">7dp</dimen>
-    <dimen name="grid_spacing">4dp</dimen>
+    <dimen name="card_outer_padding">4dp</dimen>
+    <dimen name="grid_spacing">2dp</dimen>
     <dimen name="grid_column_width">130dp</dimen>
 </resources>

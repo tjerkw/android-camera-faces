@@ -1,6 +1,7 @@
 package com.mobepic.camerafaces;
 
 import java.nio.ByteBuffer;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -29,9 +30,9 @@ public abstract class CameraFaceDetectionActivity extends CameraActivity impleme
     protected int previewWidth;
     protected int previewHeight;
     // scales down the preview frame to speedup face detection (but it will be less accurate)
-    protected float DETECTOR_IMG_SCALE = 0.5f;
+    protected float DETECTOR_IMG_SCALE = 0.25f;
     // the actual face detector
-    private static final int MAX_FACES = 6;
+    private static final int MAX_FACES = 10;
 
     /* Face Detection Threads */
     private boolean isThreadWorking = false;
@@ -44,6 +45,8 @@ public abstract class CameraFaceDetectionActivity extends CameraActivity impleme
 
     // this listens for the face to be detected
     private FaceDetectionListener listener;
+    // wether the face detection is running
+    private boolean detecting = true;
 
     protected void log(String msg) {
         Log.d("CameraFaceDetection", msg);
@@ -53,15 +56,53 @@ public abstract class CameraFaceDetectionActivity extends CameraActivity impleme
         this.listener = listener;
     }
 
+    protected boolean isDetecting() {
+        return detecting;
+    }
+
+    protected void setDetecting(boolean flag) {
+        if (!detecting && flag) {
+            // restart the detection loop
+            getNextPreviewFrame();
+        }
+        detecting = flag;
+    }
+
+    private Camera.Size getBestSize(int width, int height, List<Size> sizes) {
+        Camera.Size result = null;
+
+        for (Camera.Size size : sizes) {
+            if (size.width <= width && size.height <= height) {
+                if (result == null) {
+                    result=size;
+                }
+                else {
+                    int resultArea=result.width * result.height;
+                    int newArea=size.width * size.height;
+
+                    if (newArea > resultArea) {
+                        result=size;
+                    }
+                }
+            }
+        }
+        if (result == null) {
+            result = sizes.get(0);
+        }
+
+        return result;
+    }
+
     protected void onCameraStarted() {
         log("onCameraStarted");
         camera = super.getCamera();
         Parameters p = camera.getParameters();
-        try {
-            p.setAutoWhiteBalanceLock(false);
-        } catch(Exception e) {}
         Size previewSize = p.getPreviewSize();
-        p.setFlashMode(Parameters.FLASH_MODE_AUTO);
+
+        // limit max size of picture to sppedup the app
+        Size size = getBestSize(1024*2, 1024*2, p.getSupportedPictureSizes());
+        p.setPictureSize(size.width, size.height);
+
         camera.setParameters(p);
 
         // setup face detector
@@ -107,7 +148,7 @@ public abstract class CameraFaceDetectionActivity extends CameraActivity impleme
             return;
         }
         // run only one analysis thread at one time
-        if (!isThreadWorking) {
+        if (!isThreadWorking && detecting) {
             log("We got a previes frame, start detecing");
             isThreadWorking = true;
             // copy only Y buffer
@@ -123,6 +164,9 @@ public abstract class CameraFaceDetectionActivity extends CameraActivity impleme
     }
 
     void getNextPreviewFrame() {
+        if (!detecting) {
+            return;
+        }
         // repaint in ui thread
         log("postInvalidate abd sleep" + view);
         view.postInvalidate();
@@ -133,7 +177,7 @@ public abstract class CameraFaceDetectionActivity extends CameraActivity impleme
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        if(camera!=null) {
+        if (camera!=null) {
             camera.addCallbackBuffer(preview);
         }
     }

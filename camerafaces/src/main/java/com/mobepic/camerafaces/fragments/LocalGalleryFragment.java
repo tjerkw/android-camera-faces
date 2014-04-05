@@ -18,6 +18,8 @@ import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -43,8 +45,11 @@ public class LocalGalleryFragment extends ListFragment implements LoaderManager.
 
     public void onViewCreated (View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        //getListView().setLayoutAnimation(AnimationUtils.loadLayoutAnimation(getActivity(), R.anim.slide_in));
         createAdapter();
         setListAdapter(adapter);
+
 
         // Start out with a progress indicator.
         setListShown(false);
@@ -95,12 +100,13 @@ public class LocalGalleryFragment extends ListFragment implements LoaderManager.
                 //long originalImageId = Long.parseLong(url.substring(url.lastIndexOf("/") + 1, url.length()));
                 log("Loading image " + path);
 
-                aq.find(R.id.image).image(new File(path), true, 300, new BitmapAjaxCallback() {
+                final AQuery image = aq.find(R.id.image);
+                image.image(new File(path), true, 300, new BitmapAjaxCallback() {
 
                     @Override
                     public void callback(String url, ImageView iv, Bitmap bm, AjaxStatus s) {
                         iv.setImageBitmap(bm);
-                        aq.animate(R.anim.fade_in);
+                        image.animate(R.anim.fade_in);
                     }
 
                 });
@@ -111,9 +117,6 @@ public class LocalGalleryFragment extends ListFragment implements LoaderManager.
                 Button shareButton = (Button) view.findViewById(R.id.share);
                 shareButton.setTag(uri);
                 shareButton.setOnClickListener(shareButtonClickListener);
-
-
-
             }
         };
     }

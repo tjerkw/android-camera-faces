@@ -260,17 +260,19 @@
                 </dimen>
                 <dimen name="grid_column_width" >130dp
                 </dimen>
-                <dimen name="card_outer_padding" >7dp
+                <dimen name="card_outer_padding" >4dp
                 </dimen>
                 <dimen name="card_margin_horizontal" >4dp
                 </dimen>
-                <dimen name="grid_spacing" >4dp
+                <dimen name="grid_spacing" >2dp
                 </dimen>
             </file>
             <file
                 path="/Users/tjerk/Development/workspace/CameraFaces/camerafaces/src/main/res/values/strings.xml"
                 qualifiers="" >
                 <string name="face_forever_alone" >Forever Alone
+                </string>
+                <string name="camera_no_faces_descr" >Aim your camera at some faces
                 </string>
                 <string name="toast_camera_data_null" >Coudn\'t take picture due to a camera malfunction
                 </string>
@@ -284,11 +286,15 @@
                 </string>
                 <string name="face_lol" >LoL
                 </string>
+                <string name="camera_no_faces_detected" >No faces detected
+                </string>
                 <string name="face_me_gusta" >Me Gusta
                 </string>
                 <string name="share_picture" >Share photo
                 </string>
                 <string name="app_name" >Derpinator
+                </string>
+                <string name="title_choose_faces" >Choose some faces
                 </string>
                 <string name="face_trolo" >Trololo
                 </string>
@@ -321,6 +327,61 @@
                 path="/Users/tjerk/Development/workspace/CameraFaces/camerafaces/src/main/res/drawable-mdpi/placeholder.png"
                 qualifiers="mdpi"
                 type="drawable" />
+            <file
+                name="btn_shutter"
+                path="/Users/tjerk/Development/workspace/CameraFaces/camerafaces/src/main/res/drawable/btn_shutter.xml"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="btn_shutter_pressed"
+                path="/Users/tjerk/Development/workspace/CameraFaces/camerafaces/src/main/res/drawable-mdpi/btn_shutter_pressed.png"
+                qualifiers="mdpi"
+                type="drawable" />
+            <file
+                name="btn_shutter_pressed"
+                path="/Users/tjerk/Development/workspace/CameraFaces/camerafaces/src/main/res/drawable-hdpi/btn_shutter_pressed.png"
+                qualifiers="hdpi"
+                type="drawable" />
+            <file
+                name="btn_shutter_default"
+                path="/Users/tjerk/Development/workspace/CameraFaces/camerafaces/src/main/res/drawable-xhdpi/btn_shutter_default.png"
+                qualifiers="xhdpi"
+                type="drawable" />
+            <file
+                name="btn_shutter_pressed"
+                path="/Users/tjerk/Development/workspace/CameraFaces/camerafaces/src/main/res/drawable-xhdpi/btn_shutter_pressed.png"
+                qualifiers="xhdpi"
+                type="drawable" />
+            <file
+                name="btn_shutter_default"
+                path="/Users/tjerk/Development/workspace/CameraFaces/camerafaces/src/main/res/drawable-mdpi/btn_shutter_default.png"
+                qualifiers="mdpi"
+                type="drawable" />
+            <file
+                name="camera_overlay"
+                path="/Users/tjerk/Development/workspace/CameraFaces/camerafaces/src/main/res/layout/camera_overlay.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="btn_shutter_default"
+                path="/Users/tjerk/Development/workspace/CameraFaces/camerafaces/src/main/res/drawable-hdpi/btn_shutter_default.png"
+                qualifiers="hdpi"
+                type="drawable" />
+            <file
+                name="fade_out_zoom"
+                path="/Users/tjerk/Development/workspace/CameraFaces/camerafaces/src/main/res/anim/fade_out_zoom.xml"
+                qualifiers=""
+                type="anim" />
+            <file
+                name="shutter_out"
+                path="/Users/tjerk/Development/workspace/CameraFaces/camerafaces/src/main/res/anim/shutter_out.xml"
+                qualifiers=""
+                type="anim" />
+            <file
+                name="shutter_in"
+                path="/Users/tjerk/Development/workspace/CameraFaces/camerafaces/src/main/res/anim/shutter_in.xml"
+                qualifiers=""
+                type="anim" />
         </source>
         <source path="/Users/tjerk/Development/workspace/CameraFaces/camerafaces/build/res/rs/debug" />
         <source path="/Users/tjerk/Development/workspace/CameraFaces/camerafaces/build/res/generated/debug" />

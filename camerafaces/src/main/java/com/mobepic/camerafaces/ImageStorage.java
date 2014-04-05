@@ -65,7 +65,7 @@ public class ImageStorage {
         Log.i("WeaponActivity", "Saving weapon3d picture: "
                 + file.getPath());
         FileOutputStream fos = new FileOutputStream(file);
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, fos);
         fos.flush();
         fos.close();
 

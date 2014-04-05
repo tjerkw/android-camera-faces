@@ -12,9 +12,11 @@
     <string name="share_picture">Share photo</string>
     <string name="toast_camera_data_null">Coudn\'t take picture due to a camera malfunction</string>
 
-
     <string name="action_share">Share</string>
     <string name="action_view">View</string>
     <string name="local_gallery_empty_text">No photos found</string>
     <string name="action_open_camera">Open camera</string>
+    <string name="camera_no_faces_detected">No faces detected</string>
+    <string name="camera_no_faces_descr">Aim your camera at some faces</string>
+    <string name="title_choose_faces">Choose some faces</string>
 </resources>
