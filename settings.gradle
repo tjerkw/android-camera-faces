@@ -1,1 +1,1 @@
-include ':camerafaces', ':libraries:cardsui'
+include ':camerafaces'
