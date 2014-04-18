@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Camerafaces" parent="@android:style/Theme.Holo.Light">
-
+    <style name="Theme.Camerafaces" parent="@style/Theme.AppCompat.Light">
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+        <!-- Support library compatibility -->
+        <item name="actionBarStyle">@style/MyActionBar</item>
     </style>
+
+    <!-- general styles for the action bar -->
+    <style name="MyActionBar" parent="@style/Widget.AppCompat.ActionBar">
+        <item name="background">@android:color/white</item>
+    </style>
+
 </resources>

@@ -6,6 +6,9 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+
 import com.mobepic.camerafaces.fragments.ChooseFacesFragment;
 import com.mobepic.camerafaces.fragments.LocalGalleryFragment;
 
@@ -14,11 +17,12 @@ import com.astuetz.PagerSlidingTabStrip;
 /**
  * Activity to start with.
  */
-public class ChooseFacesActivity extends FragmentActivity {
+public class ChooseFacesActivity extends ActionBarActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_choose_faces);// Initialize the ViewPager and set an adapter
+
 
         ViewPager pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(new TabsAdapter(getSupportFragmentManager()));

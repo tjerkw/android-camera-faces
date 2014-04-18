@@ -63,6 +63,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/toggle_front_back_camera"
         android:layout_gravity="left|top"
-        android:src="@drawable/btn_shutter" />
+        android:padding="15dp"
+        android:src="@drawable/ic_switch_photo_facing_holo_light"
+        android:background="@color/transparent"/>
 
 </RelativeLayout>

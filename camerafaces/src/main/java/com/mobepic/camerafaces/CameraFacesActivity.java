@@ -51,6 +51,7 @@ public class CameraFacesActivity extends CameraFaceDetectionActivity implements 
     private Animation shutterOut;
     private Animation textIn;
     private Animation textOut;
+    private boolean animating = false;
 
     private final Camera.ShutterCallback shutterCallback = new Camera.ShutterCallback() {
         public void onShutter() {
@@ -114,12 +115,16 @@ public class CameraFacesActivity extends CameraFaceDetectionActivity implements 
         shutter.setVisibility(View.GONE);
 
         toggleCamera = (ImageButton) view.findViewById(R.id.toggle_front_back_camera);
-        toggleCamera.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                cameraView.toggleFrontBackCamera();
-            }
-        });
+        if (!cameraView.hasFrontCamera()) {
+            toggleCamera.setVisibility(View.GONE);
+        } else {
+            toggleCamera.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    cameraView.toggleFrontBackCamera();
+                }
+            });
+        }
 
         noFacesDetectedView = view.findViewById(R.id.no_faces_detected);
         noFacesDetectedView.setVisibility(View.GONE);
@@ -136,18 +141,35 @@ public class CameraFacesActivity extends CameraFaceDetectionActivity implements 
                 )
         );
 
+        Animation.AnimationListener animatingTracker = new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                animating = true;
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                animating = false;
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        };
         // setup animations
         shutterIn = AnimationUtils.loadAnimation(this, R.anim.shutter_in);
+        shutterIn.setAnimationListener(animatingTracker);
         shutterOut = AnimationUtils.loadAnimation(this, R.anim.shutter_out);
         shutterOut.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-
+                animating = true;
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
                 shutter.setVisibility(View.GONE);
+                animating = false;
             }
 
             @Override
@@ -156,16 +178,19 @@ public class CameraFacesActivity extends CameraFaceDetectionActivity implements 
             }
         });
         textIn = AnimationUtils.loadAnimation(this, R.anim.slide_in);
+        textIn.setAnimationListener(animatingTracker);
         textOut = AnimationUtils.loadAnimation(this, R.anim.slide_out);
         textOut.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
+                animating = true;
 
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
                 noFacesDetectedView.setVisibility(View.GONE);
+                animating = false;
             }
 
             @Override
@@ -443,6 +468,9 @@ public class CameraFacesActivity extends CameraFaceDetectionActivity implements 
     }
 
     private void showShutter() {
+        if (animating) {
+            return;
+        }
         shutterOut.cancel();
         shutter.setAnimation(shutterIn);
         shutter.setVisibility(View.VISIBLE);
@@ -454,6 +482,9 @@ public class CameraFacesActivity extends CameraFaceDetectionActivity implements 
     }
 
     private void hideShutter() {
+        if (animating) {
+            return;
+        }
 
         textOut.cancel();
         noFacesDetectedView.setAnimation(textIn);

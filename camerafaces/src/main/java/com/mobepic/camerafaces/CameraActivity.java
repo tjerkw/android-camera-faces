@@ -5,11 +5,13 @@ import java.util.List;
 
 import com.mobepic.camerafaces.R;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
@@ -121,7 +123,7 @@ class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         // underlying surface is created and destroyed.
         mHolder = getHolder();
         mHolder.addCallback(this);
-        //mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
     }
 
     public void surfaceCreated(SurfaceHolder holder) {
@@ -140,8 +142,12 @@ class CameraView extends SurfaceView implements SurfaceHolder.Callback {
 
     private void initCamera() {
         try {
-            mCamera = Camera.open(useFrontCamera ? 1 : 0);
-
+            try {
+                mCamera = Camera.open(useFrontCamera ? Camera.CameraInfo.CAMERA_FACING_FRONT  : Camera.CameraInfo.CAMERA_FACING_BACK);
+            } catch (Error e) {
+                // api level < 9
+                mCamera = Camera.open();
+            }
             int angle;
             Display display = mActivity.getWindowManager().getDefaultDisplay();
             switch (display.getRotation()) {
@@ -234,7 +240,15 @@ class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         startCamera();
     }
 
-
+    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
+    public boolean hasFrontCamera() {
+        try {
+            return Camera.getNumberOfCameras() > 1;
+        } catch(Error e) {
+            // pre api 9
+            return false;
+        }
+    }
 
     public void toggleFrontBackCamera() {
         useFrontCamera = !useFrontCamera;

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -36,6 +37,8 @@ public class ChooseFacesFragment extends Fragment implements AdapterView.OnItemC
     private Animation slideOut;
     // database of faces
     private Faces faces = new Faces();
+    private SparseBooleanArray checks = new SparseBooleanArray();
+    private int checkedItemCount;
 
     private void log(String msg) {
         Log.i("ChooseFacesFragment", msg);
@@ -59,33 +62,6 @@ public class ChooseFacesFragment extends Fragment implements AdapterView.OnItemC
         });
 
         gridView = (GridView)contentView.findViewById(android.R.id.list);
-        gridView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
-        gridView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-            @Override
-            public void onItemCheckedStateChanged(ActionMode actionMode, int i, long l, boolean b) {
-                log("onItemCheckedStateChanged " + gridView.getCheckedItemCount());
-            }
-
-            @Override
-            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-                return false;
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode actionMode) {
-
-            }
-        });
 
         gridView.setAdapter(new ArrayAdapter<Face>(
                 getActivity(),
@@ -118,24 +94,33 @@ public class ChooseFacesFragment extends Fragment implements AdapterView.OnItemC
     public void onResume() {
         super.onResume();
         // somehow this state is not saved
-        cameraButton.setVisibility(gridView.getCheckedItemCount() > 0 ?  View.VISIBLE : View.GONE);
+        cameraButton.setVisibility(checkedItemCount > 0 ?  View.VISIBLE : View.GONE);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
         //gridView.setItemChecked(position, !gridView.isItemChecked(position));
-        log("onItemClick " + gridView.getCheckedItemCount());
+        log("onItemClick " + checkedItemCount);
 
-        if (gridView.getCheckedItemCount() > 0) {
+        if (checks.get(position)) {
+            // uncheck
+            checks.put(position, false);
+            checkedItemCount--;
+        } else {
+            checks.put(position, true);
+            checkedItemCount++;
+        }
+
+        if (checkedItemCount > 0) {
             showCameraButton();
-        } else if (gridView.getCheckedItemCount() == 0) {
+        } else if (checkedItemCount == 0) {
             hideCameraButton();
         }
         updateItem(v, position);
     }
 
     private void updateItem(View v, int position) {
-        if(gridView.isItemChecked(position)) {
+        if (checks.get(position)) {
             v.setBackgroundResource(R.drawable.card_bg_selected_r4);
         } else {
             v.setBackgroundResource(R.drawable.card_bg_r4);
@@ -203,14 +188,14 @@ public class ChooseFacesFragment extends Fragment implements AdapterView.OnItemC
     }
 
     private void openCamera() {
-        int cnt = gridView.getCheckedItemCount();
+        int cnt = checkedItemCount;
         if (cnt == 0) {
             return;
         }
         int[] selected = new int[cnt];
         int i = 0;
         for (int pos=0;pos<faces.faces.length;pos++) {
-            if(gridView.isItemChecked(pos)) {
+            if (checks.get(pos)) {
                 selected[i++] = pos;
             }
         }
