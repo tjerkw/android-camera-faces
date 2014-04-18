@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<set xmlns:android="http://schemas.android.com/apk/res/android"
-    android:interpolator="@android:anim/decelerate_interpolator"
-    android:zAdjustment="top">
-    <translate android:fromYDelta="100%" android:toYDelta="0"
-        android:duration="300"/>
-
-    <alpha android:fromAlpha="0" android:toAlpha="1" android:duration="300"/>
-</set><!-- From: file:/Users/tjerk/Development/workspace/CameraFaces/camerafaces/src/main/res/anim/slide_in.xml -->
