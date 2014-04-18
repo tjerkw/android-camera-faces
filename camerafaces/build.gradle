@@ -14,7 +14,8 @@ repositories {
 }
 
 dependencies {
-    compile 'com.google.android:support-v4:r7'
+    //compile 'com.google.android:support-v7:r7'
+    compile "com.android.support:appcompat-v7:18.0.+"
     compile('com.astuetz:pagerslidingtabstrip:1.0.1') {
         exclude module: 'support-v4'
     }
@@ -36,9 +37,9 @@ android {
         // hardcoded for now
         release {
             storeFile file("keystore/release.jks")
-            storePassword "@ndr01dbl13p"
-            keyAlias ""
-            keyPassword ""
+            storePassword "aabbccdd11"
+            keyAlias "camerafaces"
+            keyPassword "t33w33"
         }
     }
 

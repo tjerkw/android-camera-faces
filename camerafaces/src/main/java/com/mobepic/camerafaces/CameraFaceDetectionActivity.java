@@ -30,9 +30,9 @@ public abstract class CameraFaceDetectionActivity extends CameraActivity impleme
     protected int previewWidth;
     protected int previewHeight;
     // scales down the preview frame to speedup face detection (but it will be less accurate)
-    protected float DETECTOR_IMG_SCALE = 0.25f;
+    protected float DETECTOR_IMG_SCALE = 0.4f;
     // the actual face detector
-    private static final int MAX_FACES = 10;
+    private static final int MAX_FACES = 5;
 
     /* Face Detection Threads */
     private boolean isThreadWorking = false;
