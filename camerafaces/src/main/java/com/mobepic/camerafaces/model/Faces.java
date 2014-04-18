@@ -15,7 +15,7 @@ public class Faces {
         new Face(R.drawable.face_troll, R.string.face_trolo, 1.3f),
         new Face(R.drawable.face_lol, R.string.face_lol, 0f, 0.25f, 1.4f),
         new Face(R.drawable.face_me_gusta, R.string.face_me_gusta, 1.4f),
-        new Face(R.drawable.face_forever_alone, R.string.face_forever_alone, -.2f, -.2f, 1.5f),
+        new Face(R.drawable.face_forever_alone, R.string.face_forever_alone, 0f, -.05f, 1.5f),
     };
     private static Random random = new Random();
 

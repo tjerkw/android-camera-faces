@@ -223,12 +223,15 @@ public class CameraFacesActivity extends CameraFaceDetectionActivity implements 
 
         // do in thread to prevent ANR
         try {
-            camera.takePicture(shutterCallback, null, new Camera.PictureCallback() {
+            camera.setPreviewCallback(null);
+            camera.takePicture(null, null, new Camera.PictureCallback() {
 
                 @Override
                 public void onPictureTaken(final byte[] data, Camera camera) {
-
+                    log("takePicture callback called");
                     if (data == null) {
+                        progressDialog.setMessage("No data");
+
                         Toast.makeText(CameraFacesActivity.this,
                                 R.string.toast_camera_data_null, Toast.LENGTH_LONG)
                                 .show();

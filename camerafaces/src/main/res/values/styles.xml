@@ -9,6 +9,7 @@
     <!-- general styles for the action bar -->
     <style name="MyActionBar" parent="@style/Widget.AppCompat.ActionBar">
         <item name="background">@android:color/white</item>
+        <item name="android:background">@android:color/white</item>
     </style>
 
 </resources>

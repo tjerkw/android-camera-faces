@@ -31,7 +31,7 @@ public class ChooseFacesActivity extends ActionBarActivity {
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabs.setShouldExpand(true);
         tabs.setMinimumHeight(28);
-        tabs.setIndicatorHeight(14);
+        tabs.setIndicatorHeight(11);
         tabs.setIndicatorColor(getResources().getColor(R.color.accent));
         tabs.setViewPager(pager);
     }
